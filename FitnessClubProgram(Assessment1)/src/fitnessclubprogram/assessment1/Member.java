@@ -1,9 +1,11 @@
 package fitnessclubprogram.assessment1;
 
+import java.io.Serializable;
+
 /**
  * @author linke
  */
-public class Member {
+public class Member implements Serializable {
     String firstName ; 
     String lastName ; 
     String address ; 
