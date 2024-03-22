@@ -5,8 +5,9 @@ import java.util.Scanner;
 /**
  * @author linke
  */
+
 public class FitnessClubProgramAssessment1 {    
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ClassNotFoundException {
         //What I am doing here, for the beginning at least is for testing choose the testing parameters via this one program 
         //The actual program will handle this differently but making it hacky atm. I think it has to be different .jar -- 
         //files 
@@ -25,21 +26,11 @@ public class FitnessClubProgramAssessment1 {
         }
         
         switch (instanceForTest) {
-            case "1":
-                TCPClient.socketConnection() ; 
-                break;
-            case "2":
-                TCPServer.serverMain() ; 
-                break;
-            case "3":
-                UDPClient.run(); ; 
-                break;
-            case "4":
-                UDPServer.run() ; 
-                break;
-            default:
-                System.out.println("How did you break this?") ; 
-                break;
+            case "1" -> TCPClient.socketConnection() ;
+            case "2" -> TCPServer.serverMain() ;
+            case "3" -> {UDPClient.run(); ;}
+            case "4" -> UDPServer.run() ;
+            default -> System.out.println("How did you break this?") ;
         }
         
     }
