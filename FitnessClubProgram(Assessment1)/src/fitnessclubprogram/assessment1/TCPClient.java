@@ -13,6 +13,7 @@ import java.util.Scanner;
 public class TCPClient {
     
     //Will become main 
+    //THIS IS IMPORTANT TO FIX 
     //public static void main(String args[]) { 
     public static void socketConnection() { 
         Socket s = null ; 
@@ -63,29 +64,54 @@ public class TCPClient {
         return count ; 
     }
     
+    //Get the memeber details and create the object to send to be perpetuated by file. Ugly doing error checking with the "--__--" but not sure how else to handle it cleanly even though 
+    //this is probably a way to do so 
     private static Member getMemberDetails() { 
         Member tempMembers ; 
-        String firstName, lastName, address, phoneNumber ; 
+        String firstName = null, lastName = null, address = null, phoneNumber = null; 
+        boolean check = false ; 
         
-        Scanner fNameInput = new Scanner(System.in) ; 
-        System.out.print("Enter user's first name: ") ; 
-        firstName = fNameInput.nextLine() ; 
+        while (!check) { 
+            Scanner fNameInput = new Scanner(System.in) ; 
+            System.out.print("Enter user's first name: ") ; 
+            firstName = fNameInput.nextLine() ; 
+            check = memberDetailsCheck(firstName) ; 
+        } check = false ; 
         
-        Scanner lNameInput = new Scanner(System.in) ; 
-        System.out.print("Enter user's last name: ") ; 
-        lastName = lNameInput.nextLine() ; 
+        while (!check) { 
+            Scanner lNameInput = new Scanner(System.in) ; 
+            System.out.print("Enter user's last name: ") ; 
+            lastName = lNameInput.nextLine() ; 
+            check = memberDetailsCheck(lastName) ; 
+        } check = false ; 
         
-        Scanner addressInput = new Scanner(System.in) ; 
-        System.out.print("Enter user's address: ") ; 
-        address = addressInput.nextLine() ; 
+        while (!check) { 
+            Scanner addressInput = new Scanner(System.in) ; 
+            System.out.print("Enter user's address: ") ; 
+            address = addressInput.nextLine() ; 
+            check = memberDetailsCheck(address) ; 
+        } check = false ; 
         
-        Scanner phoneInput = new Scanner(System.in) ; 
-        System.out.print("Enter user's phone number: ") ; 
-        phoneNumber = phoneInput.nextLine() ; 
+        while (!check) { 
+            Scanner phoneInput = new Scanner(System.in) ; 
+            System.out.print("Enter user's phone number: ") ; 
+            phoneNumber = phoneInput.nextLine() ; 
+            check = memberDetailsCheck(phoneNumber) ; 
+        } 
         
         tempMembers = new Member(firstName, lastName, address, phoneNumber) ; 
         System.out.println("Details of member object: " + tempMembers.toString()) ; 
         return tempMembers ; 
+    }
+    
+    //Simply, because the text of the text file is split in a specific way, error handle using that identifying string. It is incredibly unlikely to be written, but just making sure 
+    private static boolean memberDetailsCheck(String text) { 
+        boolean result = text.contains("--__--") ; 
+        if (result) { 
+            System.out.println("Invalid String '--__--' detected. Please input again without this") ; 
+            return false ; 
+        }
+        return true ; 
     }
     
 }
@@ -96,5 +122,4 @@ public class TCPClient {
 * Ask for member details and create the member object 
 * Send the data to the "server" and then output customer data 
 * Send out server response "save data for member number 1" 
-*      For debug, add port + IP address 
 */
