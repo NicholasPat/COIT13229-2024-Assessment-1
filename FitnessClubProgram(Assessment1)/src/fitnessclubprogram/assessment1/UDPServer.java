@@ -20,6 +20,8 @@ public class UDPServer {
         //Creating the socket and creating an ArrayList<> of the deserialised member objects from file 
     	DatagramSocket aSocket = null;
         ArrayList<Member> completeList = writeToList() ; 
+        
+        //If the entry is empty then display this error and exit the method 
         if (completeList.isEmpty()) { 
             System.out.println("No entries in memberobjectList, voiding the attempt for reading the file, please try again later") ; 
             return ; 
@@ -27,6 +29,7 @@ public class UDPServer {
         
         //Send and receive from the server while it is active 
         try{
+            //Definitions 
             aSocket = new DatagramSocket(2264) ;
             byte[] buffer = new byte[1000] ;
             
@@ -43,7 +46,8 @@ public class UDPServer {
                 for (int i = 0; i < completeList.size(); i++) { 
                     currentObject = serialiseObject(completeList.get(i)) ; 
                     length = currentObject.length ; 
-                    DatagramPacket reply = new DatagramPacket(currentObject, length, request.getAddress(), request.getPort()) ; 
+                    DatagramPacket reply = new DatagramPacket(currentObject, length, request.getAddress(), 
+                            request.getPort()) ; 
                     aSocket.send(reply);
                 }
             }
@@ -54,11 +58,13 @@ public class UDPServer {
     
     //Get the memberlistObject file and deserialise it to ArrayList<> and then send to the main method 
     private static ArrayList<Member> writeToList() { 
+        //Definitions 
         ArrayList<Member> memberList = new ArrayList<>() ; 
         String fileName = "memberlistObject" ; 
         FileInputStream fis ; 
         ObjectInputStream in ; 
         
+        //Try to read in the file and deserialise 
         try { 
             fis = new FileInputStream(fileName) ; 
             in = new ObjectInputStream(fis) ; 
@@ -67,12 +73,12 @@ public class UDPServer {
         } catch (IOException ex) {ex.printStackTrace();
         } catch (ClassNotFoundException ex) {ex.printStackTrace() ;}
         
+        //If emoty then return an empty list. Null will make a huge issue if returned, dealt with that issue in a previous unit 
         if (memberList.isEmpty()) { 
             return new ArrayList<>() ; 
         } 
         
-        //DEBUG - REMOVE LATER 
-        debugPrint(memberList) ; 
+        debugPrint(memberList) ; //Not actually debug anymore. Choosing to leave as it is good for the server to output and show it's initialised I think 
         
         return memberList ; 
     }

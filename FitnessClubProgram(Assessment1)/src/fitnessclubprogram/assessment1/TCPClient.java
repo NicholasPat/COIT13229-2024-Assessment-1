@@ -16,8 +16,9 @@ public class TCPClient {
     //public static void main(String args[]) { 
     public static void socketConnection() { 
         Socket s = null ; 
+        
         try { 
-            //Definitions that won't change 
+            //Definitions, some don't change 
             final int serverPort = 8864 ; 
             int count = getMemberCount() ; 
             final String hostName = "localhost" ; 
@@ -30,7 +31,6 @@ public class TCPClient {
                 out = new ObjectOutputStream(s.getOutputStream()) ; 
                 
                 //RESOLVED: For some reason, the stream isn't sending more than one object per ObjectOutputStream. Dunno how to fix so address later. For now, can only add 1 member at a time 
-                
                 //Create the member object to send to the server then send 
                 Member memberToSend ; 
                 memberToSend = getMemberDetails() ; 
@@ -38,7 +38,8 @@ public class TCPClient {
                 
                 //Output and count down until 0 then stop 
                 System.out.println("Sending data to the server...........") ; 
-                System.out.println(memberToSend.getFirstName() + ":" + memberToSend.getLastName() + ":" + memberToSend.getAddress() + ":" + memberToSend.getPhoneNumber()) ; 
+                System.out.println(memberToSend.getFirstName() + ":" + memberToSend.getLastName() + ":" + memberToSend.getAddress() + 
+                        ":" + memberToSend.getPhoneNumber()) ; 
                 System.out.println("____________________") ; 
                 count-- ; 
             }
@@ -70,7 +71,7 @@ public class TCPClient {
         String count ; 
         Scanner input = new Scanner(System.in) ; 
         System.out.print("Please input number of users you wish to add: ") ; 
-        count = input.nextLine() ; 
+        count = input.nextLine() ; //Error handle 
         return count ; 
     }
     
@@ -78,7 +79,10 @@ public class TCPClient {
     //this is probably a way to do so 
     private static Member getMemberDetails() { 
         Member tempMembers ; 
-        String firstName = null, lastName = null, address = null, phoneNumber = null; 
+        String firstName = null ; 
+        String lastName = null ; 
+        String address = null ;
+        String phoneNumber = null; 
         boolean check = false ; 
         
         while (!check) { 
