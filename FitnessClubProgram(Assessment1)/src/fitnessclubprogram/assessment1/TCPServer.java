@@ -125,32 +125,8 @@ class WriteObjectToFile extends TimerTask {
             }
         } catch (FileNotFoundException e) { 
             System.out.println("Failed readTextFile") ;
+            //Honestly, I won't error handle this more, since the program still functions even if there is no file present, it creates it immeidately as needed then keeps going 
         }
         return fullMemberList ; 
     }
-}
-
-
-
-
-/** 
- *  //To be read on startup and initialised into an array. Is this even needed here 
-    //This is serialisation, so need to pick up the .txt file and convert to object 
-    private static ArrayList<Member> readFile() { 
-        String filename = "Members" ; 
-        ArrayList<Member> members = null ; 
-        FileInputStream fis ; 
-        ObjectInputStream in ; 
-        try { 
-            fis = new FileInputStream(filename) ; 
-            in = new ObjectInputStream(fis) ; 
-            members = (ArrayList<Member>)in.readObject() ; 
-            in.close() ; 
-        }catch (IOException ex) {ex.printStackTrace();
-        }catch (ClassNotFoundException ex) { ex.printStackTrace();} 
-        if (members == null) { 
-            return new ArrayList<>() ; 
-        }
-        return members ; 
-    }
- */
+} 
