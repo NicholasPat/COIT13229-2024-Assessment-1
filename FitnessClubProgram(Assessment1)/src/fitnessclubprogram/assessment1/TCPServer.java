@@ -20,7 +20,7 @@ import java.util.TimerTask;
  */
 public class TCPServer {    
     //Will become main method in the final 
-    //public static void 
+    //public static void main(String args[]) { 
     public static void serverMain() { 
         int interval = 2000; //Print to file every 2 seconds
         java.util.Timer tm = new java.util.Timer(); 
@@ -102,6 +102,7 @@ class WriteObjectToFile extends TimerTask {
             ex.printStackTrace() ; 
         }
     }
+    
     public static ArrayList<Member> readTextFile() { 
         File file = new File("memberlist.txt") ; 
         ArrayList<Member> fullMemberList = new ArrayList<>() ; 
