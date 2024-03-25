@@ -8,10 +8,6 @@ import java.util.Scanner;
 
 public class FitnessClubProgramAssessment1 {    
     public static void main(String[] args) throws ClassNotFoundException {
-        //What I am doing here, for the beginning at least is for testing choose the testing parameters via this one program 
-        //The actual program will handle this differently but making it hacky atm. I think it has to be different .jar -- 
-        //files 
-        
         String instanceForTest = "0" ; 
         boolean state = true ; 
         //0 = Nothing, 1 = TCP Client, 2 = TCP Server, 3 = UDP Client, 4 = UDP Server 
@@ -26,12 +22,11 @@ public class FitnessClubProgramAssessment1 {
         }
         
         switch (instanceForTest) {
-            case "1" -> TCPClient.socketConnection() ;
-            case "2" -> TCPServer.serverMain() ;
-            case "3" -> {UDPClient.run(); ;}
-            case "4" -> UDPServer.run() ;
+            case "1" -> TcpClient.run() ;
+            case "2" -> TcpServer.run() ;
+            case "3" -> {UdpClient.run(); }
+            case "4" -> UdpServer.run() ;
             default -> System.out.println("How did you break this?") ;
         }
-        
     }
 }
