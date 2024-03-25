@@ -16,7 +16,7 @@ public class FitnessClubProgramAssessment1 {
             System.out.print("Please input the testing parameter desired, input = INT (1,4): " ) ; 
             instanceForTest = input.nextLine() ; 
             System.out.println() ; 
-            if (instanceForTest.equals("1") || (instanceForTest.equals("2")) || (instanceForTest.equals("3")) || (instanceForTest.equals("4")) ){ 
+            if (instanceForTest.matches("1|2|3|4")){ 
                 state = false ; 
             }
         }
