@@ -20,8 +20,10 @@ public class TcpClient {
         try { 
             //Definitions, some don't change 
             final int serverPort = 8864 ; 
-            int count = getMemberCount() ; 
             final String hostName = "localhost" ; 
+            
+            int count = getMemberCount() ; 
+            
             
             //These steps are here as it seems the stream cannot be used more than once so essentially recreating it for the new member object to be sent 
             while (count >0) { 
@@ -55,7 +57,6 @@ public class TcpClient {
             try { 
                 number = queryUserCount() ; 
                 userCount = Integer.parseInt(number) ; 
-                System.out.println("Given count: " + userCount) ; 
             } catch (NumberFormatException e) { 
                 System.out.println("Error, please input an Integer value for the count") ; 
                 userCount = 0 ; 
@@ -88,28 +89,28 @@ public class TcpClient {
             Scanner fNameInput = new Scanner(System.in) ; 
             System.out.print("Enter user's first name: ") ; 
             firstName = fNameInput.nextLine() ; 
-            check = memberDetailsCheck(firstName) ; 
+            check = memberDetailsCheck(firstName, 1) ; 
         } check = false ; 
         
         while (!check) { 
             Scanner lNameInput = new Scanner(System.in) ; 
             System.out.print("Enter user's last name: ") ; 
             lastName = lNameInput.nextLine() ; 
-            check = memberDetailsCheck(lastName) ; 
+            check = memberDetailsCheck(lastName, 1) ; 
         } check = false ; 
         
         while (!check) { 
             Scanner addressInput = new Scanner(System.in) ; 
             System.out.print("Enter user's address: ") ; 
             address = addressInput.nextLine() ; 
-            check = memberDetailsCheck(address) ; 
+            check = memberDetailsCheck(address, 1) ; 
         } check = false ; 
         
         while (!check) { 
             Scanner phoneInput = new Scanner(System.in) ; 
             System.out.print("Enter user's phone number: ") ; 
             phoneNumber = phoneInput.nextLine() ; 
-            check = memberDetailsCheck(phoneNumber) ; 
+            check = memberDetailsCheck(phoneNumber, 2) ; 
         } 
         
         tempMembers = new Member(firstName, lastName, address, phoneNumber) ; 
@@ -119,13 +120,31 @@ public class TcpClient {
     
     //Simply, because the text of the text file is split in a specific way, error handle using that identifying string. It is incredibly unlikely to be written, but just making sure 
     //as if I don't handle this it will break the program when the server attempts to read it 
-    private static boolean memberDetailsCheck(String text) { 
+    private static boolean memberDetailsCheck(String text, int tag) { 
         boolean result = text.contains("--__--") ; 
         if (result) { 
             System.out.println("""
                                Invalid String '--__--' detected. Please input again without this 
                                Reason: Because '--__--' is used to split the text when writing to file""") ; 
             return false ; 
+        }
+        
+        //Specifically testing the phone number for two checks 
+        if (tag == 2) { 
+            //Testing if 10 digits long 
+            String regexStr = "^[0-9]{10}$" ; 
+            if (!text.matches(regexStr)) { 
+                System.out.println("Number must be in format 10 digits long") ; 
+                return false ; 
+            } 
+            
+            //Checking if integer, specifically long because 10 digits goes beyond the bounds of what an int can hold 
+            try { 
+                Long.valueOf(text) ; 
+            } catch (NumberFormatException e) { 
+                System.out.println("Phone Number should not have text or spaces") ; 
+                return false ; 
+            }
         }
         return true ; 
     }
