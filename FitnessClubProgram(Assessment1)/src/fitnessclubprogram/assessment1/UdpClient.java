@@ -44,8 +44,10 @@ public class UdpClient {
             //after nothing happening for x time 
             while (true) { 
                 //Assignments 
-                reply = new DatagramPacket(buffer, buffer.length);
-                aSocket.receive(reply);
+                reply = new DatagramPacket(buffer, buffer.length) ;
+                aSocket.receive(reply) ; 
+                
+                //Intermediate member is of the Object class, so it then needs to be cast back into a Memnber to then be printed 
                 intermediateMember = deserialiseObject(reply.getData()) ; //General object to be cast to Member 
                 member = Member.class.cast(intermediateMember) ; //Cast back to Member 
                 
@@ -67,8 +69,11 @@ public class UdpClient {
    //From https://stackoverflow.com/questions/3736058/java-object-to-byte-and-byte-to-object-converter-for-tokyo-cabinet
    //The Member object for some reason to deserialised to a general object which will then be cast into its Member class 
    public static Object deserialiseObject(byte[] data) throws IOException, ClassNotFoundException { 
+       //Byte Array is what is what the "data" variable is. So what this is saying is create a byte array stream then take that array and turn it into an Object 
        ByteArrayInputStream in = new ByteArrayInputStream(data) ; 
        ObjectInputStream is = new ObjectInputStream(in) ; 
+       
+       //Take that object stream and read the object sent and cast it to the Object class, which is a general Class to be converted in the main method 
        Object member = is.readObject() ;
        return member ; 
    }

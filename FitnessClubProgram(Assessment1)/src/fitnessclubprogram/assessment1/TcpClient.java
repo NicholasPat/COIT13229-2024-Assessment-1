@@ -137,14 +137,6 @@ public class TcpClient {
                 System.out.println("Number must be in format 10 digits long") ; 
                 return false ; 
             } 
-            
-            //Checking if integer, specifically long because 10 digits goes beyond the bounds of what an int can hold 
-            try { 
-                Long.valueOf(text) ; 
-            } catch (NumberFormatException e) { 
-                System.out.println("Phone Number should not have text or spaces") ; 
-                return false ; 
-            }
         }
         return true ; 
     }

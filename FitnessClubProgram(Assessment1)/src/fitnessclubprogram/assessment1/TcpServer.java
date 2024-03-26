@@ -40,6 +40,38 @@ public class TcpServer {
             System.out.println("Listen socket: " + e.getMessage()) ; 
         }
     }
+}
+
+class Connection extends Thread { 
+    ObjectInputStream in ; 
+    ObjectOutputStream out ; 
+    Socket clientSocket ; 
+    int count = 1 ; 
+    
+    //Constructor for each connection made to the server, and it can do multiple and works as intended 
+    public Connection(Socket aClientSocket) { 
+        try { 
+            clientSocket = aClientSocket ; 
+            in = new ObjectInputStream(clientSocket.getInputStream()) ; 
+            out = new ObjectOutputStream(clientSocket.getOutputStream()) ; 
+            this.start() ; //Initiate the thread 
+        } catch (IOException e) { System.out.println("Conncetion: " + e.getMessage()) ; }
+    }
+    
+    //The actual input done by the client, so takes member object given, calls the write to file method, then writes to file 
+    public void run() { 
+        try { 
+            Member member = (Member)in.readObject() ; 
+            System.out.println("Receiving data from client: " + (count++)) ; 
+            System.out.println(member.toString()) ;
+            //Server output to client 
+            updateTextFile(member) ; 
+            
+        } catch(EOFException e){System.out.println("EOF:"+e.getMessage());
+        } catch(IOException e) {System.out.println("readline:"+e.getMessage());
+        } catch(ClassNotFoundException ex){ //ex.printStackTrace();
+        }finally{ try {clientSocket.close();}catch (IOException e){/*close failed*/}}
+    }
     
     //This makes the .txt file from the entries given which is to be made into an object via createFile() method 
     public static void updateTextFile(Member member) { 
@@ -56,38 +88,6 @@ public class TcpServer {
             pw.close() ; 
             fw.close() ; 
         } catch (IOException e) { System.out.println("Members file doesn't exist") ; }
-    }
-}
-
-class Connection extends Thread { 
-    ObjectInputStream in ; 
-    ObjectOutputStream out ; 
-    Socket clientSocket ; 
-    int count = 1 ; 
-    
-    //Constructor for each connection made to the server, and it can do multiple and works as intended 
-    public Connection(Socket aClientSocket) { 
-        try { 
-            clientSocket = aClientSocket ; 
-            in = new ObjectInputStream(clientSocket.getInputStream()) ; 
-            out = new ObjectOutputStream(clientSocket.getOutputStream()) ; 
-            this.start() ; 
-        } catch (IOException e) { System.out.println("Conncetion: " + e.getMessage()) ; }
-    }
-    
-    //The actual input done by the client, so takes member object given and writes to file 
-    public void run() { 
-        try { 
-            Member member = (Member)in.readObject() ; 
-            System.out.println("Receiving data from client: " + (count++)) ; 
-            System.out.println(member.toString()) ;
-            //Server output to client 
-            TcpServer.updateTextFile(member) ; 
-            
-        } catch(EOFException e){System.out.println("EOF:"+e.getMessage());
-        } catch(IOException e) {System.out.println("readline:"+e.getMessage());
-        } catch(ClassNotFoundException ex){ //ex.printStackTrace();
-        }finally{ try {clientSocket.close();}catch (IOException e){/*close failed*/}}
     }
 }
 
@@ -114,7 +114,7 @@ class WriteObjectToFile extends TimerTask {
     }
     
     //Readng the txt file and then making the memberobjectList file. Basically read the string line by line, chop it up into an array and remove the "--__--" identifier 
-    public static ArrayList<Member> readTextFile() { 
+    private static ArrayList<Member> readTextFile() { 
         //Definitions 
         File file = new File("memberlist.txt") ; 
         ArrayList<Member> fullMemberList = new ArrayList<>() ; 
