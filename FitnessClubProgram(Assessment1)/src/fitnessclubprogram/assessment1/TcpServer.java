@@ -1,12 +1,13 @@
 package fitnessclubprogram.assessment1;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
@@ -16,7 +17,9 @@ import java.util.Scanner;
 import java.util.TimerTask;
 
 /**
- * @author linke
+ * @author Nicholas Paterno 12188564
+ * TcpServer.java 
+ * This class is what the TcpClient is communicating with. It creates an active socket and listens for connection 
  */
 public class TcpServer {    
     //Will become main method in the final 
@@ -29,12 +32,13 @@ public class TcpServer {
         
         //Try to create the server connection and keep it open 
         try { 
-            int serverPort = 8864 ; 
+            int serverPort = 8864 ; //ID ends in -64
+            int i = 0 ; 
             ServerSocket listenSocket = new ServerSocket(serverPort) ; 
             
             while (true) { 
                 Socket clientSocket = listenSocket.accept() ; 
-                Connection c = new Connection(clientSocket) ; //Doesn't matter if reads as unused as it does what it needs to do 
+                Connection c = new Connection(clientSocket, i++) ; 
             } 
         } catch (IOException e) { 
             System.out.println("Listen socket: " + e.getMessage()) ; 
@@ -42,18 +46,25 @@ public class TcpServer {
     }
 }
 
+/** 
+ * @author Nicholas Paterno 12188564
+ * Connection Class 
+ * This class extends Thread which means multiple instances of TcpClient can connect to it at a time and it can handle all those connections 
+ * Here is where the individual members are added to file 
+ */
 class Connection extends Thread { 
-    ObjectInputStream in ; 
-    ObjectOutputStream out ; 
+    DataInputStream in ; 
+    DataOutputStream out ; 
     Socket clientSocket ; 
-    static int count = 1 ; 
+    int count ; 
     
     //Constructor for each connection made to the server, and it can do multiple and works as intended 
-    public Connection(Socket aClientSocket) { 
+    public Connection(Socket aClientSocket, int i) {
         try { 
+            count = i ; 
             clientSocket = aClientSocket ; 
-            in = new ObjectInputStream(clientSocket.getInputStream()) ; 
-            out = new ObjectOutputStream(clientSocket.getOutputStream()) ; 
+            in = new DataInputStream(clientSocket.getInputStream()) ; 
+            out = new DataOutputStream(clientSocket.getOutputStream()) ; 
             this.start() ; //Initiate the thread 
         } catch (IOException e) { System.out.println("Conncetion: " + e.getMessage()) ; }
     }
@@ -61,40 +72,67 @@ class Connection extends Thread {
     //The actual input done by the client, so takes member object given, calls the write to file method, then writes to file 
     public void run() { 
         try { 
-            Member member = (Member)in.readObject() ; 
-            System.out.println("Receiving data from client: " + (count++)) ; 
-            System.out.println(member.toString()) ;
             //Server output to client 
-            updateTextFile(member) ; 
+            String data = in.readUTF() ; 
+            int currentMemberCount = getCountFromString(data) ; 
+            out.writeUTF("Server received: Save data of member number: " + currentMemberCount) ;
             
+            //Appendix 1
+            System.out.println("Receiving data from client of current Thread count: " + count) ; 
+            updateTextFile(data) ; //Update file 
         } catch(EOFException e){System.out.println("EOF:"+e.getMessage());
         } catch(IOException e) {System.out.println("readline:"+e.getMessage());
-        } catch(ClassNotFoundException ex){ //ex.printStackTrace();
         }finally{ try {clientSocket.close();}catch (IOException e){/*close failed*/}}
     }
     
     //This makes the .txt file from the entries given which is to be made into an object via createFile() method 
-    public static void updateTextFile(Member member) { 
+    public static void updateTextFile(String data) {
+        String stringA = splitString(data) ; 
+        String fileName = "memberlist.txt" ; 
+        
         //Try and check for file, and if there just append to the end and don't recreate the whole thing by iterating over an array and adding them all 
         //The identifying string is put in as it makes it easier later to cut the string using that identifier, I feel ":" wouldn't have been good as could be used in some contexts 
         try { 
             //Printwriter: Writes to the nested FileWriter which writes to the file 
-            FileWriter fw = new FileWriter("memberlist.txt", true) ; //"true" tag makes it appendable 
+            FileWriter fw = new FileWriter(fileName, true) ; //"true" tag makes it appendable 
             PrintWriter pw = new PrintWriter(fw) ; 
-            pw.write(member.getFirstName() + "--__--" + member.getLastName() + "--__--" + member.getAddress() + 
-                    "--__--" + member.getPhoneNumber() + "\n") ; 
+            pw.write(stringA + "\n") ; 
             
             //Make sure to close or else it keeps trying and bloats the file. Made that mistake before 
             pw.close() ; 
             fw.close() ; 
-        } catch (IOException e) { System.out.println("Members file doesn't exist") ; }
+        } catch (IOException e) { 
+            System.out.println(fileName + ": doesn't exist") ; }
+    }
+    
+    //This is used to get the count of the member number from the string given by the TcpClient 
+    //Inefficient and hacky but should get the job done. Discards member object information 
+    private static int getCountFromString(String text) { 
+        int counter = 0 ; 
+        String[] brokenString = text.split("::") ; 
+        
+        try { 
+            counter = Integer.parseInt(brokenString[4]) ; 
+        } catch(NumberFormatException e) { 
+            System.out.println("Current array variable considered: " + brokenString[4]) ; 
+        }
+        return counter ; 
+    }
+    
+    private static String splitString(String text) {
+        String[] split = text.split("::") ; 
+        String stringAA = split[0] + "::" + split[1] + "::" +split[2] + "::" + split[3]; 
+        return stringAA ; 
     }
 }
 
+/** 
+ * @author Nicholas Paterno 12188564
+ * WriteObjectToFile Class 
+ * Each time the timer ticks 2 seconds, do this, which is just make an array by reading the file in the system and then serialising the objects into an object file 
+ * If the program became much larger and had more entries to cause lag in doing this step, I imagine there would be ways to do like, caching or saying go down up and append 
+ */
 class WriteObjectToFile extends TimerTask { 
-    
-    //Each time the timer ticks 2 seconds, do this, which is just make an array by reading the file in the system and then serialising the objects into an object file 
-    //If the program became much larger and had more entries to cause lag in doing this step, I imagine there'd be ways to do like, caching or saying go down up and append 
     @Override
     public void run() { 
         //Definitions 
@@ -108,7 +146,6 @@ class WriteObjectToFile extends TimerTask {
             out = new ObjectOutputStream(fos) ; 
             out.writeObject(completeMemberList) ; 
             out.close() ; 
-            System.out.println("Member object persisted") ; 
             completeMemberList.clear() ; 
         } catch (IOException ex) { ex.printStackTrace() ; }
     }
@@ -125,21 +162,19 @@ class WriteObjectToFile extends TimerTask {
             int i = 0 ; 
             while (fileInput.hasNextLine()) { 
                 String stringText = fileInput.nextLine() ; 
-                String[] brokenString = stringText.split("--__--") ; 
-                
-                //Assign to variables, although could create the object and then do .set___() 
-                String firstName = brokenString[0] ; 
-                String lastName = brokenString[1] ; 
-                String address = brokenString[2] ; 
-                String phoneNumber = brokenString[3] ; 
+                String[] brokenString = stringText.split("::") ; 
                 
                 //Create member and add to the array 
-                fullMemberList.add(new Member(firstName, lastName, address, phoneNumber)) ; 
+                fullMemberList.add(new Member(brokenString[0], brokenString[1], 
+                        brokenString[2], brokenString[3])) ; 
                 i++ ; 
             }
-        //Honestly, I won't error handle this more, since the program still functions even if there is no file present, it creates it immeidately as needed then keeps going 
-        } catch (FileNotFoundException e) { System.out.println("Failed readTextFile") ; } 
-        
+        } catch (FileNotFoundException e) { } 
         return fullMemberList ; 
     }
 } 
+/** 
+ * Appendix 1: 
+ * Output for server log - Not a proper "user 1, user 2 , etc. 
+ * But I destroy and recreate the active thread to be able to send more so have to stick with current solution
+ */
