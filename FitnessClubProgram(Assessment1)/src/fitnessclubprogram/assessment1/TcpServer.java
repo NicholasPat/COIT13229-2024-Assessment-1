@@ -46,7 +46,7 @@ class Connection extends Thread {
     ObjectInputStream in ; 
     ObjectOutputStream out ; 
     Socket clientSocket ; 
-    int count = 1 ; 
+    static int count = 1 ; 
     
     //Constructor for each connection made to the server, and it can do multiple and works as intended 
     public Connection(Socket aClientSocket) { 

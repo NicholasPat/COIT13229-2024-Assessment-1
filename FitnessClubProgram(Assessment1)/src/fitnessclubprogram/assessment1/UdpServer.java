@@ -83,9 +83,9 @@ public class UdpServer {
         return memberList ; 
     }
     
-    //Source for this: https://stackoverflow.com/questions/3736058/java-object-to-byte-and-byte-to-object-converter-for-tokyo-cabinet
     //As far as I can explain, creates a byte array which is then initialised with the object output which the then writes the member object to be sent back to the main method as a BYTE[]
     private static byte[] serialiseObject(Member member) throws IOException{ 
+        //Create a new byte array stream and cast to object output stream, then write in the member object and return the byte array 
         ByteArrayOutputStream out = new ByteArrayOutputStream() ; 
         ObjectOutputStream os = new ObjectOutputStream(out) ; 
         os.writeObject(member) ; 

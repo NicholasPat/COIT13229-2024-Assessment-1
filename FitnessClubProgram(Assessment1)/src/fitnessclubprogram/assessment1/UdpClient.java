@@ -66,7 +66,6 @@ public class UdpClient {
         }finally {if(aSocket != null) aSocket.close();}
    }
    
-   //From https://stackoverflow.com/questions/3736058/java-object-to-byte-and-byte-to-object-converter-for-tokyo-cabinet
    //The Member object for some reason to deserialised to a general object which will then be cast into its Member class 
    public static Object deserialiseObject(byte[] data) throws IOException, ClassNotFoundException { 
        //Byte Array is what is what the "data" variable is. So what this is saying is create a byte array stream then take that array and turn it into an Object 

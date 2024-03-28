@@ -11,6 +11,7 @@ import java.util.Scanner;
  * @author linke
  */
 public class TcpClient {
+    static int count = 0 ; 
     
     //Main class, get the members from the user and send the data to the server each time 
     //public static void main(String args[]) { 
@@ -22,7 +23,7 @@ public class TcpClient {
             final int serverPort = 8864 ; 
             final String hostName = "localhost" ; 
             
-            int count = getMemberCount() ; 
+            count = getMemberCount() ; 
             
             
             //These steps are here as it seems the stream cannot be used more than once so essentially recreating it for the new member object to be sent 
@@ -39,8 +40,7 @@ public class TcpClient {
                 
                 //Output and count down until 0 then stop 
                 System.out.println("Sending data to the server...........") ; 
-                System.out.println(memberToSend.getFirstName() + ":" + memberToSend.getLastName() + ":" + memberToSend.getAddress() + 
-                        ":" + memberToSend.getPhoneNumber()) ; 
+                System.out.println("Sent to server") ; 
                 System.out.println("____________________") ; 
                 count-- ; 
             }
@@ -85,6 +85,8 @@ public class TcpClient {
         String phoneNumber = null; 
         boolean check = false ; 
         
+        System.out.println("Please input details for member: " + count) ; 
+        
         while (!check) { 
             Scanner fNameInput = new Scanner(System.in) ; 
             System.out.print("Enter user's first name: ") ; 
@@ -114,7 +116,7 @@ public class TcpClient {
         } 
         
         tempMembers = new Member(firstName, lastName, address, phoneNumber) ; 
-        System.out.println("Details of member object: " + tempMembers.toString()) ; 
+        System.out.println(tempMembers.getFirstName() + ":" + tempMembers.getLastName() + ":" + tempMembers.getAddress() + ":" + tempMembers.getPhoneNumber()) ; 
         return tempMembers ; 
     }
     
