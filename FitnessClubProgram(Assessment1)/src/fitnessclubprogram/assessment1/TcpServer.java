@@ -23,8 +23,7 @@ import java.util.TimerTask;
  */
 public class TcpServer {    
     //Will become main method in the final 
-    //public static void main(String args[]) { 
-    public static void run() { 
+    public static void main(String args[]) { 
         //Code provided by Uni 
         int interval = 2000; //Print to file every 2 seconds
         java.util.Timer tm = new java.util.Timer(); 

@@ -19,7 +19,7 @@ public class UdpClient {
     private static String objectRequest = "memberListObject";
     private static String hostName;
    
-    public static void run() throws ClassNotFoundException { 
+    public static void main(String args[]) throws ClassNotFoundException { 
         //Assignments 
         DatagramSocket aSocket = null;
         hostName = "localhost";  

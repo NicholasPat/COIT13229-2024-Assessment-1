@@ -19,7 +19,7 @@ import java.util.ArrayList;
 public class UdpServer {
     
     //Most of the code borrowed from the tute, but adapted to fit the member details sending requirement 
-    public static void run(){ 
+    public static void main(String args[]) { 
         //Creating the socket and creating an ArrayList<> of the deserialised member objects from file 
     	DatagramSocket aSocket = null;
         ArrayList<Member> completeList = writeToList() ; 
@@ -60,6 +60,8 @@ public class UdpServer {
     }
     
     //Get the memberlistObject file and deserialise it to ArrayList<> and then send to the main method 
+    //Suppressing unchecked warning as it does work, dunno why it happens though 
+    @SuppressWarnings("unchecked")
     private static ArrayList<Member> writeToList() { 
         //Definitions 
         ArrayList<Member> memberList = new ArrayList<>() ; 
@@ -78,7 +80,7 @@ public class UdpServer {
         
         //If empty then return an empty list. Null will make a huge issue if returned, dealt with that issue in a previous unit 
         if (memberList.isEmpty()) { 
-            return new ArrayList<>() ; 
+            return new ArrayList<Member>() ; 
         } 
         
         debugPrint(memberList) ; //Not actually debug anymore. Choosing to leave as it is good for the server to output and show it's initialised the array as necessary

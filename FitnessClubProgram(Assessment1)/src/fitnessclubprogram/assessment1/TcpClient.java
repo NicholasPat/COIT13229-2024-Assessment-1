@@ -19,8 +19,7 @@ public class TcpClient {
     static int count = 0 ; 
     
     //Main class, get the members from the user and send the data to the server each time 
-    //public static void main(String args[]) { 
-    public static void run() { 
+    public static void main(String args[]) { 
         Socket s = null ; 
         final int serverPort = 8864 ; 
         final String hostName = "localhost" ; 
