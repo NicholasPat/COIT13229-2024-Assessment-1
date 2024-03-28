@@ -9,9 +9,11 @@ import java.net.InetAddress;
 import java.net.SocketException;
 
 /**
- * @author linke
+ * @author Nicholas Paterno 12188564
+ * UdpClient.java 
+ * This is used to communicate with the UdpServer and get the member list one at a time and then output that list 
+ * Formatted to be in tabular format to be more human friendly 
  */
-
 public class UdpClient {
     //Assignments 
     private static String objectRequest = "memberListObject";
@@ -22,6 +24,7 @@ public class UdpClient {
         DatagramSocket aSocket = null;
         hostName = "localhost";  
         
+        //Try and send the server a request, then receive members as reply. Output to console
         try {
             //Assignments for pinging the server
             aSocket = new DatagramSocket() ; 
@@ -40,8 +43,7 @@ public class UdpClient {
             DatagramPacket reply ; 
             int count = 0 ; 
             
-            //While the connection is active, do this. Connection should always be active so will be forever open. Not an issue though as it works. Could add a timer in some way to stop 
-            //after nothing happening for x time 
+            //Appendix 1
             while (true) { 
                 //Assignments 
                 reply = new DatagramPacket(buffer, buffer.length) ;
@@ -77,3 +79,10 @@ public class UdpClient {
        return member ; 
    }
 }
+
+/** 
+ * Appendix 1: 
+ * While the connection is active, do this. Connection should always be active so will be forever open. Not an issue though as it works 
+ * Could add a timer in some way to stop after nothing happening for x time but not sure. Or could get the total number of the array and just make it work 
+ * until that point. But for now there is no need 
+ */

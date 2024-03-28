@@ -11,7 +11,10 @@ import java.net.SocketException;
 import java.util.ArrayList;
 
 /**
- * @author linke
+ * @author linke 12188564
+ * UdpServer.java 
+ * This is class is back-end of the UDP side of things. This takes the memberobjectList file and converts it to 
+ * the member array and sends it back to the UdpClient to be displayed in tabular form 
  */
 public class UdpServer {
     
@@ -73,13 +76,12 @@ public class UdpServer {
         } catch (IOException ex) {ex.printStackTrace();
         } catch (ClassNotFoundException ex) {ex.printStackTrace() ;}
         
-        //If emoty then return an empty list. Null will make a huge issue if returned, dealt with that issue in a previous unit 
+        //If empty then return an empty list. Null will make a huge issue if returned, dealt with that issue in a previous unit 
         if (memberList.isEmpty()) { 
             return new ArrayList<>() ; 
         } 
         
-        debugPrint(memberList) ; //Not actually debug anymore. Choosing to leave as it is good for the server to output and show it's initialised I think 
-        
+        debugPrint(memberList) ; //Not actually debug anymore. Choosing to leave as it is good for the server to output and show it's initialised the array as necessary
         return memberList ; 
     }
     
@@ -100,23 +102,4 @@ public class UdpServer {
         }
         System.out.println("End of entry list") ; 
     }
-    
 }
-
-/**
- * byte[] fillerString = "--__--".getBytes() ; 
-                String objectString = completeList.get(0).getFirstName() + fillerString + completeList.get(0).getLastName() + fillerString + completeList.get(0).getAddress() +
-                        fillerString + completeList.get(0).getPhoneNumber() ; 
-                
-                byte[] objectCurrent = objectString.getBytes() ; 
- */
-
-//INSTEAD OF TO STRING just use get name, get address, etc and use the --__-- splitter and then send the string, then unpack it on the other end and then display results 
-//Potential issue, I dunno if I can send that many requests concurrently. Play around. But toString ain't gonna work 
-
-//Arrays.toString(objectCurrent).length()
-//DatagramPacket reply = new DatagramPacket(request.getData(), request.getLength(), request.getAddress(), request.getPort());
-
-//completeList.get(i).getFirstName() + fillerString + completeList.get(i).getLastName() + fillerString + completeList.get(i).getAddress() + fillerString + completeList.get(i).getPhoneNumber() ; 
-//System.out.println("Client Request: " + new String(request.getData(), 0, request.getLength()) + " at port: " + request.getPort() + " at address: " + request.getAddress() + "");
-//System.out.println("Current byte: " + currentObject.toString() + " \nCurrent length: " + length) ; 
