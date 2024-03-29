@@ -42,6 +42,7 @@ public class UdpServer {
                 //Create the packet to prepare for sending. Catch the request and get the port, and address from it as can't hard code these in, have to be dynamic 
                 DatagramPacket request = new DatagramPacket(buffer, buffer.length);
                 aSocket.receive(request);
+                System.out.println("Request received: " + request) ; 
                 byte[] currentObject ; 
                 int length ; 
                 
