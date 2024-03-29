@@ -39,7 +39,7 @@ public class UdpClient {
             //Assignments for the responses 
             Object intermediateMember ; 
             Member member ; 
-            byte[] buffer = new byte[1000];
+            byte[] buffer = new byte[1000] ;
             DatagramPacket reply ; 
             int count = 0 ; 
             
@@ -56,7 +56,8 @@ public class UdpClient {
                 //Actual output -- It basically is saying: Do this once and only once 
                 if (count == 0) { 
                     System.out.println("Response from server:") ; 
-                    System.out.format("%18s%16s%28s%14s", "First Name|", "Last Name|", "Address|", "Phone Number" + "\n") ; 
+                    System.out.format("%18s%16s%28s%14s", "First Name|", 
+                            "Last Name|", "Address|", "Phone Number" + "\n") ; 
                 }
                 
                 System.out.format("%18s%16s%28s%14s%n", member.getFirstName(), member.getLastName(), 
@@ -74,7 +75,7 @@ public class UdpClient {
        ByteArrayInputStream in = new ByteArrayInputStream(data) ; 
        ObjectInputStream is = new ObjectInputStream(in) ; 
        
-       //Take that object stream and read the object sent and cast it to the Object class, which is a general Class to be converted in the main method 
+       //Take that object stream and read the object sent and cast it to the Object class, which is a general Class to be converted back in the main method 
        Object member = is.readObject() ;
        return member ; 
    }

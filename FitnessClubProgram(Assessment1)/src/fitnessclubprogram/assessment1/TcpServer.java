@@ -38,6 +38,8 @@ public class TcpServer {
             while (true) { 
                 Socket clientSocket = listenSocket.accept() ; 
                 Connection c = new Connection(clientSocket, i++) ; 
+                System.out.printf("\nServer waiting on: %d for client from %d ",
+                 listenSocket.getLocalPort(), clientSocket.getPort() );
             } 
         } catch (IOException e) { 
             System.out.println("Listen socket: " + e.getMessage()) ; 
