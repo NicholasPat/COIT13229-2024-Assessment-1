@@ -20,11 +20,15 @@ import java.util.TimerTask;
  * @author Nicholas Paterno 12188564
  * TcpServer.java 
  * This class is what the TcpClient is communicating with. It creates an active socket and listens for connection 
+ * It takes the Member text string sent by the client and then processes it into the memberlist.txt file 
+ * Every 2 seconds, the timer task activates which will take the memberlist.txt file and serialise all the 
+ * member details listed inside 
  */
 public class TcpServer {    
-    //Will become main method in the final 
+    
+    //Starts scheduled task, tries to create socket, accepts and creates connections 
     public static void main(String args[]) { 
-        //Code provided by Uni 
+        //Code provided by Uni, basically just invoke the class at 2000ms intervals 
         int interval = 2000; //Print to file every 2 seconds
         java.util.Timer tm = new java.util.Timer(); 
         tm.schedule(new WriteObjectToFile(), interval, interval);
@@ -35,6 +39,7 @@ public class TcpServer {
             int i = 0 ; 
             ServerSocket listenSocket = new ServerSocket(serverPort) ; 
             
+            //While socket is active, accept listen and create a connection (thread) 
             while (true) { 
                 Socket clientSocket = listenSocket.accept() ; 
                 Connection c = new Connection(clientSocket, i++) ; 
@@ -60,10 +65,13 @@ class Connection extends Thread {
     int count ; 
     
     //Constructor for each connection made to the server, and it can do multiple and works as intended 
+    //int i is taken for giving each thread a count 
     public Connection(Socket aClientSocket, int i) {
         try { 
             count = i ; 
             clientSocket = aClientSocket ; 
+            
+            //Creates streams for input and output. Then starts those streams and waits for connections 
             in = new DataInputStream(clientSocket.getInputStream()) ; 
             out = new DataOutputStream(clientSocket.getOutputStream()) ; 
             this.start() ; //Initiate the thread 
@@ -73,8 +81,10 @@ class Connection extends Thread {
     //The actual input done by the client, so takes member object given, calls the write to file method, then writes to file 
     public void run() { 
         try { 
-            //Server output to client 
+            //Text input from the client 
             String data = in.readUTF() ; 
+            
+            //Process the count and send back string with the count 
             int currentMemberCount = getCountFromString(data) ; 
             out.writeUTF("Server received: Save data of member number: " + currentMemberCount) ;
             
@@ -115,11 +125,13 @@ class Connection extends Thread {
         try { 
             counter = Integer.parseInt(brokenString[4]) ; 
         } catch(NumberFormatException e) { 
+            //Should never error, unless manually editing the .tct file 
             System.out.println("Current array variable considered: " + brokenString[4]) ; 
         }
         return counter ; 
     }
     
+    //Inelegent, but removes the "::x" from the counter added and returns rest of string 
     private static String splitString(String text) {
         String[] split = text.split("::") ; 
         String stringAA = split[0] + "::" + split[1] + "::" +split[2] + "::" + split[3]; 
@@ -130,8 +142,8 @@ class Connection extends Thread {
 /** 
  * @author Nicholas Paterno 12188564
  * WriteObjectToFile Class 
- * Each time the timer ticks 2 seconds, do this, which is just make an array by reading the file in the system and then serialising the objects into an object file 
- * If the program became much larger and had more entries to cause lag in doing this step, I imagine there would be ways to do like, caching or saying go down up and append 
+ * Each time the timer ticks 2 seconds, do this, which is just make an array by reading the file in the system and then serialise the objects into an object file 
+ * If no file exists, just doesn't do anything and simply waits for the file to be populated 
  */
 class WriteObjectToFile extends TimerTask { 
     @Override
@@ -146,38 +158,44 @@ class WriteObjectToFile extends TimerTask {
             fos = new FileOutputStream(fileName) ;  
             out = new ObjectOutputStream(fos) ; 
             
-            //This makes the objects serialise as an ArrayList<Member>. Meaning it will cast as an ArrayList<Member> when deserialised 
+            //This makes the objects serialise as an ArrayList<Member>. Meaning it will cast as an ArrayList<Member> when deserialised, not Member 
             out.writeObject(completeMemberList) ; 
             out.close() ; 
             completeMemberList.clear() ; 
         } catch (IOException ex) { ex.printStackTrace() ; }
     }
     
-    //Readng the txt file and then making the memberobjectList file. Basically read the string line by line, chop it up into an array and remove the "--__--" identifier 
+    //Readng the txt file and then making the memberobjectList file. Basically read the string line by line, chop it up into an array and remove the "::" identifier 
     private static ArrayList<Member> readTextFile() { 
         //Definitions 
         File file = new File("memberlist.txt") ; 
         ArrayList<Member> fullMemberList = new ArrayList<>() ; 
+        String stringText ; 
+        String[] brokenString ; 
         
         //Attempt to read the file, if successful read into the array line by line and then end and return the list to the variable in method 
         try { 
             Scanner fileInput = new Scanner(file) ; 
-            int i = 0 ; 
+            
+            //While there are entries, keep adding to array until no more 
             while (fileInput.hasNextLine()) { 
-                String stringText = fileInput.nextLine() ; 
-                String[] brokenString = stringText.split("::") ; 
+                stringText = fileInput.nextLine() ; 
+                brokenString = stringText.split("::") ; 
                 
                 //Create member and add to the array 
                 fullMemberList.add(new Member(brokenString[0], brokenString[1], 
                         brokenString[2], brokenString[3])) ; 
-                i++ ; 
             }
-        } catch (FileNotFoundException e) { } 
+        } catch (FileNotFoundException e) { 
+            //Do nothing because it does not matter. Will just create it as needed 
+        } 
         return fullMemberList ; 
     }
 } 
 /** 
  * Appendix 1: 
  * Output for server log - Not a proper "user 1, user 2 , etc. 
- * But I destroy and recreate the active thread to be able to send more so have to stick with current solution
+ * Because I destroy and recreate the active thread to be able to send more so have to stick with current solution
+ * This means the server doesn't say "data from user x" it says "receiving data from current thread x" which is 
+ * specific language 
  */
