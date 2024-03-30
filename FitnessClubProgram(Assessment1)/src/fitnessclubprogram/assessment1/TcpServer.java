@@ -145,6 +145,8 @@ class WriteObjectToFile extends TimerTask {
         try { 
             fos = new FileOutputStream(fileName) ;  
             out = new ObjectOutputStream(fos) ; 
+            
+            //This makes the objects serialise as an ArrayList<Member>. Meaning it will cast as an ArrayList<Member> when deserialised 
             out.writeObject(completeMemberList) ; 
             out.close() ; 
             completeMemberList.clear() ; 
